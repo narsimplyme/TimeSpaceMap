@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "400099156409-7ivbmot9tjt8jud57k0dn0a5d0rji2rh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.narsi.timespacemap",
+            "certificate_hash": "f1e350ae1369980fc0d4c914b076e7121672e9eb"
+          }
+        },
+        {
           "client_id": "400099156409-8rabndvj665jimi229p0iv6jpg2977o6.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +37,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "400099156409-8rabndvj665jimi229p0iv6jpg2977o6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2
