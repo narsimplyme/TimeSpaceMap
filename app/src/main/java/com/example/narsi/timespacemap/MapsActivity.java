@@ -44,9 +44,9 @@ public class MapsActivity extends FragmentActivity  implements GoogleMap.OnMapCl
     public void onStart() {
         super.onStart();
         if(mAuth.getCurrentUser()==null){
-            Intent login;
-            login = new Intent(this, LoginActivity.class);
-            startActivity(login);
+//            Intent login;
+//            login = new Intent(this, LoginActivity.class);
+//            startActivity(login);
         }
     }
 
