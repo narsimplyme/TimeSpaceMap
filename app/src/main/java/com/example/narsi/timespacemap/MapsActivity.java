@@ -58,14 +58,14 @@ public class MapsActivity extends FragmentActivity  implements GoogleMap.OnMapCl
         mMap.setOnMapLongClickListener(this);
         mMap.setOnCameraIdleListener(this);
 
-
-
-        final LatLng _5Gong = new LatLng(37.221936, 127.187611);
-        Marker melbourne = mMap.addMarker(new MarkerOptions()
-                .position(_5Gong)
-                .title("제5공학관")
-                .snippet("컴공의 성지"));
-        melbourne.showInfoWindow();
+//
+//
+//        final LatLng _5Gong = new LatLng(37.221936, 127.187611);
+//        Marker melbourne = mMap.addMarker(new MarkerOptions()
+//                .position(_5Gong)
+//                .title("제5공학관")
+//                .snippet("컴공의 성지"));
+//        melbourne.showInfoWindow();
     }
 
     @Override
@@ -75,10 +75,11 @@ public class MapsActivity extends FragmentActivity  implements GoogleMap.OnMapCl
 
     @Override
     public void onMapClick(LatLng latLng) {
-        Marker newMarker = mMap.addMarker(new MarkerOptions()
-                .position(latLng)
-                .title("클릭함")
-                .snippet("띠용"));
+        Intent newPost = new Intent(this, NewPostActivity.class);
+        newPost.putExtra("lat",latLng.latitude);
+        newPost.putExtra("lng",latLng.longitude);
+
+        startActivity(newPost);
     }
 
     @Override

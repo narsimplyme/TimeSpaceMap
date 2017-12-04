@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -38,6 +39,7 @@ public class NewPostActivity extends BaseActivity {
     private EditText mTitleField;
     private EditText mBodyField;
     private FloatingActionButton mSubmitButton;
+    protected double lat, lng;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +53,8 @@ public class NewPostActivity extends BaseActivity {
         mTitleField = findViewById(R.id.field_title);
         mBodyField = findViewById(R.id.field_body);
         mSubmitButton = findViewById(R.id.fab_submit_post);
+        lat = this.getIntent().getDoubleExtra("lat",lat);
+        lng = this.getIntent().getDoubleExtra("lng",lng);
 
 
         mSubmitButton.setOnClickListener(new View.OnClickListener() {
@@ -99,14 +103,7 @@ public class NewPostActivity extends BaseActivity {
                                     Toast.LENGTH_SHORT).show();
                         } else {
                             // Write new post
-                            LocationManager locationManager = (LocationManager)
-                                    getSystemService(Context.LOCATION_SERVICE);
-                            Criteria criteria = new Criteria();
-
-                            @SuppressLint("MissingPermission")
-                            Location location = locationManager.getLastKnownLocation(locationManager
-                                    .getBestProvider(criteria, false));
-                            writeNewPost(userId, user.username, title, body,location);
+                            writeNewPost(userId, user.username, title, body);
                         }
 
                         // Finish this Activity, back to the stream
@@ -137,12 +134,10 @@ public class NewPostActivity extends BaseActivity {
     }
 
     // [START write_fan_out]
-    private void writeNewPost(String userId, String username, String title, String body, Location location) {
+    private void writeNewPost(String userId, String username, String title, String body) {
         // Create new post at /user-posts/$userid/$postid and at
         // /posts/$postid simultaneously
         String key = mDatabase.child("posts").push().getKey();
-        double lat = location.getLatitude();
-        double lng = location.getLongitude();
         Post post = new Post(userId, username, title, body,lat, lng);
         Map<String, Object> postValues = post.toMap();
 
