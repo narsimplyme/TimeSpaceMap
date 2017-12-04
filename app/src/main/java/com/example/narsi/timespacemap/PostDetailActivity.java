@@ -13,16 +13,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.narsi.timespacemap.BaseActivity;
+import com.example.narsi.timespacemap.models.Comment;
+import com.example.narsi.timespacemap.models.Post;
+import com.example.narsi.timespacemap.models.User;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.example.narsi.timespacemap.models.User;
-import com.example.narsi.timespacemap.models.Comment;
-import com.example.narsi.timespacemap.models.Post;
 
 import java.util.ArrayList;
 import java.util.List;

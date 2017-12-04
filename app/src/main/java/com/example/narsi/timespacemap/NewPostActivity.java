@@ -1,5 +1,6 @@
 package com.example.narsi.timespacemap;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
@@ -102,10 +103,9 @@ public class NewPostActivity extends BaseActivity {
                                     getSystemService(Context.LOCATION_SERVICE);
                             Criteria criteria = new Criteria();
 
+                            @SuppressLint("MissingPermission")
                             Location location = locationManager.getLastKnownLocation(locationManager
                                     .getBestProvider(criteria, false));
-                            double latitude = location.getLatitude();
-                            double longitude = location.getLongitude();
                             writeNewPost(userId, user.username, title, body,location);
                         }
 
