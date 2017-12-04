@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.narsi.timespacemap.R;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -21,7 +22,6 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
 import com.example.narsi.timespacemap.PostDetailActivity;
-import com.example.narsi.timespacemap.R;
 import com.example.narsi.timespacemap.models.Post;
 import com.example.narsi.timespacemap.viewholder.PostViewHolder;
 

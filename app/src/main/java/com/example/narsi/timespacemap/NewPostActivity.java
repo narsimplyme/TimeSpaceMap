@@ -1,7 +1,13 @@
 package com.example.narsi.timespacemap;
 
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -44,6 +50,7 @@ public class NewPostActivity extends BaseActivity {
         mTitleField = findViewById(R.id.field_title);
         mBodyField = findViewById(R.id.field_body);
         mSubmitButton = findViewById(R.id.fab_submit_post);
+
 
         mSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,7 +98,15 @@ public class NewPostActivity extends BaseActivity {
                                     Toast.LENGTH_SHORT).show();
                         } else {
                             // Write new post
-                            writeNewPost(userId, user.username, title, body);
+                            LocationManager locationManager = (LocationManager)
+                                    getSystemService(Context.LOCATION_SERVICE);
+                            Criteria criteria = new Criteria();
+
+                            Location location = locationManager.getLastKnownLocation(locationManager
+                                    .getBestProvider(criteria, false));
+                            double latitude = location.getLatitude();
+                            double longitude = location.getLongitude();
+                            writeNewPost(userId, user.username, title, body,location);
                         }
 
                         // Finish this Activity, back to the stream
@@ -122,10 +137,12 @@ public class NewPostActivity extends BaseActivity {
     }
 
     // [START write_fan_out]
-    private void writeNewPost(String userId, String username, String title, String body,double lat, double lng) {
+    private void writeNewPost(String userId, String username, String title, String body, Location location) {
         // Create new post at /user-posts/$userid/$postid and at
         // /posts/$postid simultaneously
         String key = mDatabase.child("posts").push().getKey();
+        double lat = location.getLatitude();
+        double lng = location.getLongitude();
         Post post = new Post(userId, username, title, body,lat, lng);
         Map<String, Object> postValues = post.toMap();
 
