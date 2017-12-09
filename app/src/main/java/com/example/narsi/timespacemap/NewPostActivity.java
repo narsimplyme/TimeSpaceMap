@@ -1,12 +1,9 @@
 package com.example.narsi.timespacemap;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.pm.PackageManager;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
@@ -15,16 +12,22 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import android.Manifest;
+import com.example.narsi.timespacemap.models.Post;
+import com.example.narsi.timespacemap.models.User;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.example.narsi.timespacemap.models.Post;
-import com.example.narsi.timespacemap.models.User;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class NewPostActivity extends BaseActivity {
@@ -40,6 +43,15 @@ public class NewPostActivity extends BaseActivity {
     private EditText mBodyField;
     private FloatingActionButton mSubmitButton;
     protected double lat, lng;
+    protected Location mLastLocation;
+
+    private String mLatitudeLabel;
+    private String mLongitudeLabel;
+    private FusedLocationProviderClient mFusedLocationClient;
+    private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
+
+    LatLng userLocation;
+    Location myLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +65,7 @@ public class NewPostActivity extends BaseActivity {
         mTitleField = findViewById(R.id.field_title);
         mBodyField = findViewById(R.id.field_body);
         mSubmitButton = findViewById(R.id.fab_submit_post);
-        lat = this.getIntent().getDoubleExtra("lat",lat);
-        lng = this.getIntent().getDoubleExtra("lng",lng);
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
 
         mSubmitButton.setOnClickListener(new View.OnClickListener() {
@@ -63,6 +74,60 @@ public class NewPostActivity extends BaseActivity {
                 submitPost();
             }
         });
+    }
+
+    protected void onStart(){
+        super.onStart();
+        if (!checkPermissions()) {
+            requestPermissions();
+        } else {
+            getLastLocation();
+        }
+    }
+    @SuppressWarnings("MissingPermission")
+    private void getLastLocation() {
+        mFusedLocationClient.getLastLocation()
+                .addOnCompleteListener(this, new OnCompleteListener<Location>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Location> task) {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            mLastLocation = task.getResult();
+                            lng = mLastLocation.getLongitude();
+                            lat = mLastLocation.getLatitude();
+                        } else {
+                        }
+                    }
+                });
+    }
+    private boolean checkPermissions() {
+        int permissionState = ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION);
+        return permissionState == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void startLocationPermissionRequest() {
+        ActivityCompat.requestPermissions(NewPostActivity.this,
+                new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                REQUEST_PERMISSIONS_REQUEST_CODE);
+    }
+    private void requestPermissions() {
+        boolean shouldProvideRationale =
+                ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION);
+
+        // Provide an additional rationale to the user. This would happen if the user denied the
+        // request previously, but didn't check the "Don't ask again" checkbox.
+        if (shouldProvideRationale) {
+            Log.i(TAG, "Displaying permission rationale to provide additional context.");
+
+                startLocationPermissionRequest();
+
+
+        } else {
+            Log.i(TAG, "Requesting permission");
+
+            startLocationPermissionRequest();
+        }
     }
 
     private void submitPost() {
@@ -122,7 +187,23 @@ public class NewPostActivity extends BaseActivity {
                 });
         // [END single_value_read]
     }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        Log.i(TAG, "onRequestPermissionResult");
+        if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
+            if (grantResults.length <= 0) {
+                // If user interaction was interrupted, the permission request is cancelled and you
+                // receive empty arrays.
+                Log.i(TAG, "User interaction was cancelled.");
+            } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted.
+                getLastLocation();
+            } else {
 
+
+        }
+    }}
     private void setEditingEnabled(boolean enabled) {
         mTitleField.setEnabled(enabled);
         mBodyField.setEnabled(enabled);
