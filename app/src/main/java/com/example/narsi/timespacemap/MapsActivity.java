@@ -63,13 +63,11 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
             @Override
             public void onClick(View v) {
                 Intent newPost = new Intent(MapsActivity.this, NewPostActivity.class);
-                newPost.putExtra("lat",userLocation.latitude);
                 startActivity(newPost);
             }
         });
 
         mDatabase = FirebaseDatabase.getInstance().getReference().child("posts");
-
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
