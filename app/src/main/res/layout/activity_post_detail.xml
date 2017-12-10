@@ -24,7 +24,7 @@
             android:id="@+id/MoveButton"
             android:background="#4553FD"
             android:drawableTop="@drawable/ic_progress"
-            android:layout_marginLeft="100dp"
+            android:layout_marginLeft="150dp"
             android:layout_width="30dp"
             android:layout_height="30dp" />
     </LinearLayout>
