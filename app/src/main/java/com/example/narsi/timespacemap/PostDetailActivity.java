@@ -45,7 +45,6 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
     private EditText mCommentField;
     private Button mCommentButton;
     private RecyclerView mCommentsRecycler;
-    private Button mMoveButton;
     private Post post;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,10 +69,8 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
         mCommentField = findViewById(R.id.field_comment_text);
         mCommentButton = findViewById(R.id.button_post_comment);
         mCommentsRecycler = findViewById(R.id.recycler_comments);
-        mMoveButton=findViewById(R.id.MoveButton);
         mCommentButton.setOnClickListener(this);
         mCommentsRecycler.setLayoutManager(new LinearLayoutManager(this));
-        mMoveButton.setOnClickListener(this);
     }
 
     @Override
@@ -133,9 +130,6 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
         int i = v.getId();
         if (i == R.id.button_post_comment) {
             postComment();
-        }
-        if (i == R.id.MoveButton){
-
         }
     }
 

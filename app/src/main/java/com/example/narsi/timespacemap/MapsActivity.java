@@ -7,11 +7,9 @@ import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.View;
 
 import com.example.narsi.timespacemap.models.Post;
@@ -23,7 +21,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -36,9 +33,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
+/*
+*  MainActivity 대신 실행되는 MapsActivity이다.
+*  구글맵스를 사용함
+*/
 public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener, GoogleMap.OnCameraIdleListener,
         OnMapReadyCallback,GoogleMap.OnMyLocationButtonClickListener {
 
@@ -65,9 +64,9 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         mAuth = FirebaseAuth.getInstance();
-        markerMap = new HashMap<Marker, String>();
-        postMap = new HashMap<String, Post>();
-        dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        markerMap = new HashMap<Marker, String>();                              // Marker와 postKey 연동
+        postMap = new HashMap<String, Post>();                                  // postKey와 실제 post를 매칭
+        dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");  // 데이터베이스 저장 용이와 가독성을 위해 날짜 형식 지정
 
 
         findViewById(R.id.fab_new_post).setOnClickListener(new View.OnClickListener() {
@@ -92,13 +91,13 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
         });
 
 
+        //데이터베이스를 읽어오는 부분
         mDatabase = FirebaseDatabase.getInstance().getReference().child("posts");
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot messageSnapshot: dataSnapshot.getChildren()) {
                     Post post = messageSnapshot.getValue(Post.class);
-
                     updateMarker(post,messageSnapshot.getKey());
                 }
             }
@@ -110,6 +109,8 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
 
         });
 
+
+        //주기적으로 볼아가는 메소드. 시작날짜와 종료날짜를 확인하기 위해 돌아간다
         customHandler = new android.os.Handler();
         customHandler.postDelayed(checkMarker, 0);
 
@@ -120,7 +121,10 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
 
 
     }
-
+    /*
+    *  주기적으로 Marker의 Date를 체크하여 지도에 표시하거나 숨기거나 하는 메소드
+    *  아래에 UpdateMarker 메소드와 유사하다.
+    */
     private Runnable checkMarker = new Runnable() {
         public void run(){
             for (Map.Entry<Marker, String> entry: markerMap.entrySet() ) {
@@ -146,7 +150,10 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
         }
     };
 
-
+    /*
+    *  마커를 추가해주는 메소드.
+    *  Date()를 써서 추가할 때 BeginDate와 EndDate를 비교하여 실제로 표시할 지 숨길지를 정한다.
+    */
 
     private void updateMarker(Post post,String postKey) {
         Marker postMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(post.lat,post.lng)).title(post.title));
@@ -162,7 +169,10 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
+        // HashMap을 써서 Marker와 post의 Key를 매핑해둔다.
         markerMap.put(postMarker, postKey);
+        // HashMap<Marker,HashMap>가 간결하긴 하나 대신 관리가 편하게 Hashmap을 하나 더 둔다.
         postMap.put(postKey,post);
 
     }
@@ -170,13 +180,20 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
     @Override
     public void onStart() {
         super.onStart();
-
+    /*
+    *  첫 실행 시 로그인이 안되어 있으면 바로 로그인 액티비티로 전환
+    */
         if (mAuth.getCurrentUser() == null) {
             Intent login;
             login = new Intent(this, SignInActivity.class);
             startActivity(login);
         }
     }
+
+
+    /*
+    *  마쉬멜로우부터 권한 획득이 바뀜에 따라 Manifest 외에도 권한을 불러오게 해줘야함
+    */
     private void enableMyLocation() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -199,6 +216,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
             if(myLocation!=null){
                 userLocation = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 14), 1500, null);
+                // 내 위치가 확인이 되면 카메라 위치를 변경한다
             }
         }
     }
@@ -211,6 +229,8 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
         mMap.setOnMapClickListener(this);
         mMap.setOnMapLongClickListener(this);
         mMap.setOnCameraIdleListener(this);
+
+        //마커를 선택했을 때 HashMap인 markermap에서 마커의 정보를 토대로 key를 불러와 포스트를 불러온다
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(final Marker marker) {
@@ -221,10 +241,12 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
                 return false;
             }
         });
+
+        //줌 아웃이 너무 과도하게 되지 않게 하기 위해 제한
         mMap.setMinZoomPreference(14f);
-        mMap.setMaxZoomPreference(14f);
+
+        // 핀치&줌 외의 제스쳐 제한
         mMap.getUiSettings().setScrollGesturesEnabled(false);
-        mMap.getUiSettings().setAllGesturesEnabled(false);
 
     }
 
@@ -253,8 +275,9 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
 
     @Override
     public boolean onMyLocationButtonClick() {
-
         userLocation = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
         return false;
     }
+
+
 }
