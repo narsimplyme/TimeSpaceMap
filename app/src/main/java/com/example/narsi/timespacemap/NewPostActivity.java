@@ -1,14 +1,18 @@
 package com.example.narsi.timespacemap;
 
+import android.app.Dialog;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.Checkable;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -26,6 +30,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -45,8 +51,10 @@ public class NewPostActivity extends BaseActivity {
     protected double lat, lng;
     protected Location mLastLocation;
 
-    private String mLatitudeLabel;
-    private String mLongitudeLabel;
+    private CheckBox checkBeginDate;
+    private CheckBox checkEndDate;
+    CustomDateTimePicker custom;
+
     private FusedLocationProviderClient mFusedLocationClient;
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
 
@@ -67,13 +75,40 @@ public class NewPostActivity extends BaseActivity {
         mSubmitButton = findViewById(R.id.fab_submit_post);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-
         mSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 submitPost();
             }
         });
+
+
+
+
+        custom = new CustomDateTimePicker(this, new CustomDateTimePicker.ICustomDateTimeListener() {
+
+                    @Override
+                    public void onSet(Dialog dialog, Calendar calendarSelected,
+                                      Date dateSelected, int year, String monthFullName,
+                                      String monthShortName, int monthNumber, int date,
+                                      String weekDayFullName, String weekDayShortName,
+                                      int hour24, int hour12, int min, int sec,
+                                      String AM_PM) {
+                        final EditText begindate = (EditText) findViewById(R.id.textBeginDate);
+                        edtEventDateTime.setText("");
+                        edtEventDateTime.setText(year
+                                + "-" + (monthNumber + 1) + "-" + calendarSelected.get(Calendar.DAY_OF_MONTH)
+                                + " " + hour24 + ":" + min
+                                + ":" + sec);
+                    }
+
+                    @Override
+                    public void onCancel() {
+
+                    }
+                });
+
+
     }
 
     protected void onStart(){
@@ -120,7 +155,7 @@ public class NewPostActivity extends BaseActivity {
         if (shouldProvideRationale) {
             Log.i(TAG, "Displaying permission rationale to provide additional context.");
 
-                startLocationPermissionRequest();
+            startLocationPermissionRequest();
 
 
         } else {
@@ -202,8 +237,8 @@ public class NewPostActivity extends BaseActivity {
             } else {
 
 
-        }
-    }}
+            }
+        }}
     private void setEditingEnabled(boolean enabled) {
         mTitleField.setEnabled(enabled);
         mBodyField.setEnabled(enabled);
@@ -229,4 +264,10 @@ public class NewPostActivity extends BaseActivity {
         mDatabase.updateChildren(childUpdates);
     }
     // [END write_fan_out]
+
+
+
+
+
+
 }
