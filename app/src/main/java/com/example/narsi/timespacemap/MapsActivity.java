@@ -62,10 +62,17 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
                 startActivity(newPost);
             }
         });
-        findViewById(R.id.fab).setOnClickListener(new View.OnClickListener(){
+        findViewById(R.id.fab_list_post).setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 Intent go_post = new Intent(MapsActivity.this, MainActivity.class);
                 startActivity(go_post);
+            }
+        });
+        findViewById(R.id.fab_logout).setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(MapsActivity.this, SignInActivity.class));
+                finish();
             }
         });
 
