@@ -54,9 +54,9 @@ public class Post {
         result.put("stars", stars);
         result.put("lat",lat);
         result.put("lng",lng);
-        if(!beginDate.isEmpty())
+        if(beginDate != null)
             result.put("beginDate",beginDate);
-        if(!endDate.isEmpty())
+        if(endDate != null)
             result.put("endDate",endDate);
 
         return result;

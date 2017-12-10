@@ -109,7 +109,7 @@ public class NewPostActivity extends BaseActivity {
 
             @Override
             public void onCancel() {
-
+                checkBeginDate.setChecked(false);
             }
         });
         custom2 = new CustomDateTimePicker(this, new CustomDateTimePicker.ICustomDateTimeListener() {
@@ -127,7 +127,7 @@ public class NewPostActivity extends BaseActivity {
 
             @Override
             public void onCancel() {
-
+                checkEndDate.setChecked(false);
             }
         });
         checkBeginDate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

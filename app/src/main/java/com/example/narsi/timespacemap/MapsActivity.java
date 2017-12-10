@@ -7,9 +7,11 @@ import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 
 import com.example.narsi.timespacemap.models.Post;
@@ -21,29 +23,40 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener, GoogleMap.OnCameraIdleListener,
         OnMapReadyCallback,GoogleMap.OnMyLocationButtonClickListener {
 
 
     private static final int RC_SIGN_IN = 123;
+    private static final String TAG = "TAG";
 
     private GoogleMap mMap;
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
+    private DateFormat dateFormat;
 
     LatLng userLocation;
     Location myLocation;
 
+    android.os.Handler customHandler;
     Map<Marker, String> markerMap;
+    Map<String, Post> postMap;
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
@@ -53,6 +66,8 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
         setContentView(R.layout.activity_maps);
         mAuth = FirebaseAuth.getInstance();
         markerMap = new HashMap<Marker, String>();
+        postMap = new HashMap<String, Post>();
+        dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
 
         findViewById(R.id.fab_new_post).setOnClickListener(new View.OnClickListener() {
@@ -95,6 +110,8 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
 
         });
 
+        customHandler = new android.os.Handler();
+        customHandler.postDelayed(checkMarker, 0);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -104,9 +121,49 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
 
     }
 
-    private void updateMarker(Post post,String postkey) {
+    private Runnable checkMarker = new Runnable() {
+        public void run(){
+            for (Map.Entry<Marker, String> entry: markerMap.entrySet() ) {
+                Post post = postMap.get(entry.getValue());
+                try {
+                    if (post.beginDate != null) {
+                        if (new Date().before(dateFormat.parse(post.beginDate)))
+                            entry.getKey().setVisible(false);
+                        if (new Date().after(dateFormat.parse(post.beginDate)))
+                            entry.getKey().setVisible(true);
+                    }
+                    if (post.endDate != null) {
+                        if (new Date().after(dateFormat.parse(post.endDate)))
+                            entry.getKey().setVisible(false);
+                        if (new Date().before(dateFormat.parse(post.endDate)))
+                            entry.getKey().setVisible(true);
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+            customHandler.postDelayed(this, 1000);
+        }
+    };
+
+
+
+    private void updateMarker(Post post,String postKey) {
         Marker postMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(post.lat,post.lng)).title(post.title));
-        markerMap.put(postMarker, postkey);
+        try {
+            if(post.beginDate != null){
+                if(new Date().before(dateFormat.parse(post.beginDate))) postMarker.setVisible(false);
+                if(new Date().after(dateFormat.parse(post.beginDate))) postMarker.setVisible(true);
+            }
+            if(post.endDate != null){
+                if(new Date().after(dateFormat.parse(post.endDate))) postMarker.setVisible(false);
+                if(new Date().before(dateFormat.parse(post.endDate))) postMarker.setVisible(true);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        markerMap.put(postMarker, postKey);
+        postMap.put(postKey,post);
 
     }
 
@@ -174,7 +231,8 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
 
     @Override
     public void onCameraIdle() {
-
+        customHandler = new android.os.Handler();
+        customHandler.postDelayed(checkMarker, 0);
     }
 
     @Override
