@@ -134,7 +134,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
 
             if(myLocation!=null){
                 userLocation = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 12), 1500, null);
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 14), 1500, null);
             }
         }
     }
@@ -157,6 +157,8 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
                 return false;
             }
         });
+        mMap.setMinZoomPreference(14f);
+        mMap.setMaxZoomPreference(14f);
 
 
     }
