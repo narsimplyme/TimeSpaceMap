@@ -166,7 +166,8 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
         });
         mMap.setMinZoomPreference(14f);
         mMap.setMaxZoomPreference(14f);
-
+        mMap.getUiSettings().setScrollGesturesEnabled(false);
+        mMap.getUiSettings().setAllGesturesEnabled(false);
 
     }
 
