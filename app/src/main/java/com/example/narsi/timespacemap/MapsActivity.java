@@ -7,16 +7,12 @@ import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.example.narsi.timespacemap.models.Post;
-import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -25,17 +21,14 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener, GoogleMap.OnCameraIdleListener,
         OnMapReadyCallback,GoogleMap.OnMyLocationButtonClickListener {
@@ -50,6 +43,8 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
     LatLng userLocation;
     Location myLocation;
 
+    Map<Marker, String> markerMap;
+
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
     @Override
@@ -57,6 +52,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         mAuth = FirebaseAuth.getInstance();
+        markerMap = new HashMap<Marker, String>();
 
 
         findViewById(R.id.fab_new_post).setOnClickListener(new View.OnClickListener() {
@@ -73,7 +69,8 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot messageSnapshot: dataSnapshot.getChildren()) {
                     Post post = messageSnapshot.getValue(Post.class);
-                    updateMarker(post);
+
+                    updateMarker(post,messageSnapshot.getKey());
                 }
             }
 
@@ -83,6 +80,8 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
             }
 
         });
+
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -91,8 +90,10 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
 
     }
 
-    private void updateMarker(Post post) {
-        mMap.addMarker(new MarkerOptions().position(new LatLng(post.lat,post.lng)).title(post.title));
+    private void updateMarker(Post post,String postkey) {
+        Marker postMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(post.lat,post.lng)).title(post.title));
+        markerMap.put(postMarker, postkey);
+
     }
 
     @Override
@@ -139,6 +140,16 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
         mMap.setOnMapClickListener(this);
         mMap.setOnMapLongClickListener(this);
         mMap.setOnCameraIdleListener(this);
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(final Marker marker) {
+                String postKey = markerMap.get(marker);
+                Intent intent = new Intent(MapsActivity.this, PostDetailActivity.class);
+                intent.putExtra(PostDetailActivity.EXTRA_POST_KEY, postKey);
+                startActivity(intent);
+                return false;
+            }
+        });
 
 
     }
@@ -151,11 +162,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
 
     @Override
     public void onMapClick(LatLng latLng) {
-//        Intent newPost = new Intent(this, NewPostActivity.class);
-//        newPost.putExtra("lat",latLng.latitude);
-//        newPost.putExtra("lng",latLng.longitude);
-//
-//        startActivity(newPost);
+
     }
 
     @Override
