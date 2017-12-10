@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,7 +51,7 @@ public class NewPostActivity extends BaseActivity {
 
     private CheckBox checkBeginDate;
     private CheckBox checkEndDate;
-    CustomDateTimePicker custom;
+    CustomDateTimePicker custom1, custom2;
     private TextView beginDate;
     private TextView endDate;
 
@@ -73,6 +74,8 @@ public class NewPostActivity extends BaseActivity {
         mSubmitButton = findViewById(R.id.fab_submit_post);
         beginDate = findViewById(R.id.textBeginDate);
         endDate = findViewById(R.id.textEndDate);
+        checkBeginDate = findViewById(R.id.checkBeginDate);
+        checkEndDate = findViewById(R.id.checkEndDate);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         mSubmitButton.setOnClickListener(new View.OnClickListener() {
@@ -88,25 +91,68 @@ public class NewPostActivity extends BaseActivity {
 
 
 
-        custom = new CustomDateTimePicker(this, new CustomDateTimePicker.ICustomDateTimeListener() {
+        custom1 = new CustomDateTimePicker(this, new CustomDateTimePicker.ICustomDateTimeListener() {
 
-                    @Override
-                    public void onSet(Dialog dialog, Calendar calendarSelected,
-                                      Date dateSelected, int year, String monthFullName,
-                                      String monthShortName, int monthNumber, int date,
-                                      String weekDayFullName, String weekDayShortName,
-                                      int hour24, int hour12, int min, int sec,
-                                      String AM_PM) {
-                        beginDate.setText(dateSelected.toString());
-                    }
+            @Override
+            public void onSet(Dialog dialog, Calendar calendarSelected,
+                              Date dateSelected, int year, String monthFullName,
+                              String monthShortName, int monthNumber, int date,
+                              String weekDayFullName, String weekDayShortName,
+                              int hour24, int hour12, int min, int sec,
+                              String AM_PM) {
+                beginDate.setText(dateSelected.toString());
+            }
 
-                    @Override
-                    public void onCancel() {
+            @Override
+            public void onCancel() {
 
-                    }
-                });
+            }
+        });
+        custom2 = new CustomDateTimePicker(this, new CustomDateTimePicker.ICustomDateTimeListener() {
 
-        custom.showDialog();
+            @Override
+            public void onSet(Dialog dialog, Calendar calendarSelected,
+                              Date dateSelected, int year, String monthFullName,
+                              String monthShortName, int monthNumber, int date,
+                              String weekDayFullName, String weekDayShortName,
+                              int hour24, int hour12, int min, int sec,
+                              String AM_PM) {
+                endDate.setText(dateSelected.toString());
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+        });
+        checkBeginDate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (buttonView.isChecked()) {
+                    custom1.showDialog();
+                }
+                else
+                {
+                    beginDate.setText(null);
+                }
+
+            }
+        });
+
+        checkEndDate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (buttonView.isChecked()) {
+                    custom2.showDialog();
+                }
+                else
+                {
+                    endDate.setText(null);
+                }
+
+            }
+        });
+
 
 
 
