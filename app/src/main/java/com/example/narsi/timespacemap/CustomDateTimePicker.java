@@ -18,7 +18,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * Created by admin on 6/29/2016.
+ * 한 화면에 날짜와 시간을 표시하기 위한 액티비티
  */
 public class CustomDateTimePicker implements View.OnClickListener {
     private DatePicker datePicker;

@@ -45,7 +45,6 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
     private EditText mCommentField;
     private Button mCommentButton;
     private RecyclerView mCommentsRecycler;
-    private Button mMoveButton;
     private Post post;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +71,6 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
         mCommentsRecycler = findViewById(R.id.recycler_comments);
         mCommentButton.setOnClickListener(this);
         mCommentsRecycler.setLayoutManager(new LinearLayoutManager(this));
-        mMoveButton.setOnClickListener(this);
     }
 
     @Override

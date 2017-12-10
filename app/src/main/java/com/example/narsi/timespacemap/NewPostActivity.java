@@ -91,11 +91,23 @@ public class NewPostActivity extends BaseActivity {
         checkBeginDate = findViewById(R.id.checkBeginDate);
         checkEndDate = findViewById(R.id.checkEndDate);
 
+        /*
+        *  한국 친화적으로 타임존을 아시아로 변경
+        */
+
         TimeZone kst = TimeZone.getTimeZone("Asia/Seoul");
         dateFormat.setTimeZone(kst);
 
-        custom1 = new CustomDateTimePicker(this, new CustomDateTimePicker.ICustomDateTimeListener() {
 
+        /*
+        *  CustomDateTimePicker를 호출하는 메소드.
+        *  각자 설정된 TextView에 시간을 넣어준다.
+        *
+        *  사실 간편하게 만들려다보니 코드가 불필요해졌음.
+        *  다음에는 클릭한 요소에만 들어가게 해야함
+        */
+
+        custom1 = new CustomDateTimePicker(this, new CustomDateTimePicker.ICustomDateTimeListener() {
             @Override
             public void onSet(Dialog dialog, Calendar calendarSelected,
                               Date dateSelected, int year, String monthFullName,
@@ -106,14 +118,13 @@ public class NewPostActivity extends BaseActivity {
 
                 beginDate.setText(dateFormat.format(dateSelected));
             }
-
             @Override
             public void onCancel() {
                 checkBeginDate.setChecked(false);
             }
+            // 만약 취소를 누르게 되면 체크를 다시 해제한다.
         });
         custom2 = new CustomDateTimePicker(this, new CustomDateTimePicker.ICustomDateTimeListener() {
-
             @Override
             public void onSet(Dialog dialog, Calendar calendarSelected,
                               Date dateSelected, int year, String monthFullName,
@@ -121,15 +132,18 @@ public class NewPostActivity extends BaseActivity {
                               String weekDayFullName, String weekDayShortName,
                               int hour24, int hour12, int min, int sec,
                               String AM_PM) {
-
                 endDate.setText(dateFormat.format(dateSelected));
             }
-
             @Override
             public void onCancel() {
                 checkEndDate.setChecked(false);
             }
+            // 만약 취소를 누르게 되면 체크를 다시 해제한다.
         });
+
+    /*
+    *  체크박스를 체크하면 위의 날짜/시간 선택 다이얼로그가 나온다.
+    */
         checkBeginDate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -139,11 +153,14 @@ public class NewPostActivity extends BaseActivity {
                 else
                 {
                     beginDate.setText(null);
+                    // 만약 체크를 제거하면 텍스트를 제거한다.
                 }
 
             }
         });
-
+    /*
+    *  체크박스를 체크하면 위의 날짜/시간 선택 다이얼로그가 나온다.
+    */
         checkEndDate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -153,6 +170,7 @@ public class NewPostActivity extends BaseActivity {
                 else
                 {
                     endDate.setText(null);
+                    // 만약 체크를 제거하면 텍스트를 제거한다.
                 }
 
             }
@@ -163,6 +181,10 @@ public class NewPostActivity extends BaseActivity {
 
     }
 
+
+    /*
+    *  포스트 작성시 위치정보가 필요하므로 권한 체크를 해준다.
+    */
     protected void onStart(){
         super.onStart();
         if (!checkPermissions()) {
@@ -307,6 +329,12 @@ public class NewPostActivity extends BaseActivity {
         // /posts/$postid simultaneously
         String key = mDatabase.child("posts").push().getKey();
         Post post = new Post(userId, username, title, body,lat, lng);
+
+        /*
+        *  날짜가 없으면 건너뛰게 되고
+        *  날짜가 있으면 Post에 추가하게 된다.
+        */
+
         if(!beginDate.getText().toString().isEmpty())
             post.beginDate=beginDate.getText().toString();
         if(!endDate.getText().toString().isEmpty())

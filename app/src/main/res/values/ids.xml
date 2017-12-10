@@ -5,7 +5,6 @@
         Your Facebook App ID. See README.
     -->
     <!--  TODO(developer): REPLACE -->
-    <string name="facebook_app_id">REPLACE_ME</string>
 
     <!--
       Your Twitter Key and Secret, see README.
