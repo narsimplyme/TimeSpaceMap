@@ -5,6 +5,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.WindowManager;
 import android.widget.VideoView;
 
@@ -36,5 +37,14 @@ public class SplashActivity extends AppCompatActivity {
             }
         });
         VideoView.start();
+    }
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        // TODO Auto-generated method stub
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            startActivity(new Intent(SplashActivity.this, MapsActivity.class));
+            finish();
+        }
+        return super.onTouchEvent(event);
     }
 }
