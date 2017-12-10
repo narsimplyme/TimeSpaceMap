@@ -51,45 +51,28 @@
         android:id="@+id/checkEndDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/checkBeginDate"
+        android:layout_alignStart="@+id/textBeginDate"
         android:layout_below="@+id/checkBeginDate"
-        android:layout_marginTop="120dp"
+        android:layout_marginTop="33dp"
         android:text="set End Date" />
 
-    <EditText
-        android:id="@+id/textBeginDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/checkBeginDate"
-        android:layout_below="@+id/checkBeginDate"
-        android:ems="10"
-        android:inputType="date" />
-
-    <EditText
-        android:id="@+id/textBeginTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/textBeginDate"
-        android:layout_below="@+id/textBeginDate"
-        android:ems="10"
-        android:inputType="time" />
-
-    <EditText
+    <TextView
         android:id="@+id/textEndDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/textBeginDate"
         android:layout_alignStart="@+id/checkEndDate"
         android:layout_below="@+id/checkEndDate"
-        android:ems="10"
-        android:inputType="date" />
+        android:textAlignment="center"
+        android:textSize="14sp" />
 
-    <EditText
-        android:id="@+id/textEndTime"
-        android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/textBeginDate"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/textEndDate"
-        android:layout_below="@+id/textEndDate"
-        android:ems="10"
-        android:inputType="time" />
+        android:layout_alignStart="@+id/checkBeginDate"
+        android:layout_below="@+id/checkBeginDate"
+        android:textAlignment="center"
+        android:textSize="14sp" />
 
 </RelativeLayout>

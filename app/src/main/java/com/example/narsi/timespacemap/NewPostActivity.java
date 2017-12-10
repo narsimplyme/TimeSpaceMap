@@ -6,14 +6,13 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
-import android.widget.Checkable;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import android.Manifest;
@@ -21,7 +20,6 @@ import com.example.narsi.timespacemap.models.Post;
 import com.example.narsi.timespacemap.models.User;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
@@ -33,7 +31,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 public class NewPostActivity extends BaseActivity {
@@ -54,12 +51,13 @@ public class NewPostActivity extends BaseActivity {
     private CheckBox checkBeginDate;
     private CheckBox checkEndDate;
     CustomDateTimePicker custom;
+    private TextView beginDate;
+    private TextView endDate;
 
     private FusedLocationProviderClient mFusedLocationClient;
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
 
-    LatLng userLocation;
-    Location myLocation;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +71,8 @@ public class NewPostActivity extends BaseActivity {
         mTitleField = findViewById(R.id.field_title);
         mBodyField = findViewById(R.id.field_body);
         mSubmitButton = findViewById(R.id.fab_submit_post);
+        beginDate = findViewById(R.id.textBeginDate);
+        endDate = findViewById(R.id.textEndDate);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         mSubmitButton.setOnClickListener(new View.OnClickListener() {
@@ -81,6 +81,9 @@ public class NewPostActivity extends BaseActivity {
                 submitPost();
             }
         });
+
+        checkBeginDate = findViewById(R.id.checkBeginDate);
+        checkEndDate = findViewById(R.id.checkEndDate);
 
 
 
@@ -94,12 +97,7 @@ public class NewPostActivity extends BaseActivity {
                                       String weekDayFullName, String weekDayShortName,
                                       int hour24, int hour12, int min, int sec,
                                       String AM_PM) {
-                        final EditText begindate = (EditText) findViewById(R.id.textBeginDate);
-                        edtEventDateTime.setText("");
-                        edtEventDateTime.setText(year
-                                + "-" + (monthNumber + 1) + "-" + calendarSelected.get(Calendar.DAY_OF_MONTH)
-                                + " " + hour24 + ":" + min
-                                + ":" + sec);
+                        beginDate.setText(dateSelected.toString());
                     }
 
                     @Override
@@ -107,6 +105,9 @@ public class NewPostActivity extends BaseActivity {
 
                     }
                 });
+
+        custom.showDialog();
+
 
 
     }
@@ -255,6 +256,11 @@ public class NewPostActivity extends BaseActivity {
         // /posts/$postid simultaneously
         String key = mDatabase.child("posts").push().getKey();
         Post post = new Post(userId, username, title, body,lat, lng);
+        if(!beginDate.getText().toString().isEmpty())
+            post.beginDate=beginDate.getText().toString();
+        if(!endDate.getText().toString().isEmpty())
+            post.endDate=endDate.getText().toString();
+
         Map<String, Object> postValues = post.toMap();
 
         Map<String, Object> childUpdates = new HashMap<>();

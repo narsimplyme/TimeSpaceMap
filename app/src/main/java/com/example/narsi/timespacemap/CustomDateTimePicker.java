@@ -153,8 +153,8 @@ public class CustomDateTimePicker implements View.OnClickListener {
             selectedMinute = calendar_date.get(Calendar.MINUTE);
 
             timePicker.setIs24HourView(is24HourView);
-            timePicker.setCurrentHour(selectedHour);
-            timePicker.setCurrentMinute(selectedMinute);
+            timePicker.setHour(selectedHour);
+            timePicker.setMinute(selectedMinute);
 
             datePicker.updateDate(calendar_date.get(Calendar.YEAR),
                     calendar_date.get(Calendar.MONTH),

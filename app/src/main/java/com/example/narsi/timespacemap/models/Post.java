@@ -3,6 +3,7 @@ package com.example.narsi.timespacemap.models;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,6 +18,8 @@ public class Post {
     public double lat, lng;
     public int starCount = 0;
     public Map<String, Boolean> stars = new HashMap<>();
+    public String beginDate;
+    public String endDate;
 
     public Post() {
         // Default constructor required for calls to DataSnapshot.getValue(Post.class)
@@ -31,6 +34,14 @@ public class Post {
         this.lng = lng;
     }
 
+    public void setBeginDate(String date){
+        this.beginDate = date;
+    }
+    public void setEndDate(String date){
+        this.endDate = date;
+    }
+
+
     // [START post_to_map]
     @Exclude
     public Map<String, Object> toMap() {
@@ -43,6 +54,10 @@ public class Post {
         result.put("stars", stars);
         result.put("lat",lat);
         result.put("lng",lng);
+        if(!beginDate.isEmpty())
+            result.put("beginDate",beginDate);
+        if(!endDate.isEmpty())
+            result.put("endDate",endDate);
 
         return result;
     }
