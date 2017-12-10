@@ -20,13 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true" />
-        <Button
-            android:id="@+id/MoveButton"
-            android:background="#4553FD"
-            android:drawableTop="@drawable/ic_progress"
-            android:layout_marginLeft="150dp"
-            android:layout_width="30dp"
-            android:layout_height="30dp" />
+
     </LinearLayout>
 
 

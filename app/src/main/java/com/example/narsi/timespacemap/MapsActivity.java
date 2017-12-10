@@ -256,4 +256,6 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
         userLocation = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
         return false;
     }
+
+
 }

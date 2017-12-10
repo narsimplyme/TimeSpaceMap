@@ -46,6 +46,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
     private Button mCommentButton;
     private RecyclerView mCommentsRecycler;
     private Button mMoveButton;
+    private Post post;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,7 +70,6 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
         mCommentField = findViewById(R.id.field_comment_text);
         mCommentButton = findViewById(R.id.button_post_comment);
         mCommentsRecycler = findViewById(R.id.recycler_comments);
-        mMoveButton=findViewById(R.id.MoveButton);
         mCommentButton.setOnClickListener(this);
         mCommentsRecycler.setLayoutManager(new LinearLayoutManager(this));
         mMoveButton.setOnClickListener(this);
@@ -85,7 +85,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // Get Post object and use the values to update the UI
-                Post post = dataSnapshot.getValue(Post.class);
+                post = dataSnapshot.getValue(Post.class);
                 // [START_EXCLUDE]
                 mAuthorView.setText(post.author);
                 mTitleView.setText(post.title);

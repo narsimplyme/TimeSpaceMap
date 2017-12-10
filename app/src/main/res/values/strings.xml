@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">Firebase Database</string>
-    <string name="title_activity_login">Firebase Database</string>
-    <string name="title_activity_maps">Firebase Database</string>
+    <string name="app_name">TimeSpaceMap</string>
+    <string name="title_activity_login">TimeSpaceMap</string>
+    <string name="title_activity_maps">TimeSpaceMap</string>
     <string name="action_settings">Settings</string>
     <string name="menu_login">Log in</string>
     <string name="menu_logout">Log out</string>
