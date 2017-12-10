@@ -21,28 +21,28 @@ public class SplashActivity extends AppCompatActivity {
 
         getSupportActionBar().hide();
 
-        VideoView=(VideoView)findViewById(R.id.videoView);
+        VideoView=(VideoView)findViewById(R.id.videoView);//videoview xml파일 가져오기
 
-        Uri video=Uri.parse("android.resource://" + getPackageName()+"/" +R.raw.intro);
+        Uri video=Uri.parse("android.resource://" + getPackageName()+"/" +R.raw.intro);//video 위치 변수에 저장
 
-        VideoView.setVideoURI(video);
+        VideoView.setVideoURI(video);//videovidw에 위치 넣기
 
         VideoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
                 if(isFinishing())
                     return;
-                startActivity(new Intent(SplashActivity.this, MapsActivity.class));
+                startActivity(new Intent(SplashActivity.this, MapsActivity.class));//인텐트 발생으로 맵엑티비티 시작
                 finish();
             }
         });
-        VideoView.start();
+        VideoView.start();//비디오뷰 시작
     }
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         // TODO Auto-generated method stub
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            startActivity(new Intent(SplashActivity.this, MapsActivity.class));
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {//터치 다운 됬을 경우
+            startActivity(new Intent(SplashActivity.this, MapsActivity.class));//맵스 액티비티 바로시작
             finish();
         }
         return super.onTouchEvent(event);
