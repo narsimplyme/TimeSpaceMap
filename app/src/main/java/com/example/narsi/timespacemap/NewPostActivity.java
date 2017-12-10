@@ -29,10 +29,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 public class NewPostActivity extends BaseActivity {
 
@@ -77,7 +80,7 @@ public class NewPostActivity extends BaseActivity {
         checkBeginDate = findViewById(R.id.checkBeginDate);
         checkEndDate = findViewById(R.id.checkEndDate);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
+        final DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         mSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -88,8 +91,8 @@ public class NewPostActivity extends BaseActivity {
         checkBeginDate = findViewById(R.id.checkBeginDate);
         checkEndDate = findViewById(R.id.checkEndDate);
 
-
-
+        TimeZone kst = TimeZone.getTimeZone("Asia/Seoul");
+        dateFormat.setTimeZone(kst);
 
         custom1 = new CustomDateTimePicker(this, new CustomDateTimePicker.ICustomDateTimeListener() {
 
@@ -100,7 +103,8 @@ public class NewPostActivity extends BaseActivity {
                               String weekDayFullName, String weekDayShortName,
                               int hour24, int hour12, int min, int sec,
                               String AM_PM) {
-                beginDate.setText(dateSelected.toString());
+
+                beginDate.setText(dateFormat.format(dateSelected));
             }
 
             @Override
@@ -117,7 +121,8 @@ public class NewPostActivity extends BaseActivity {
                               String weekDayFullName, String weekDayShortName,
                               int hour24, int hour12, int min, int sec,
                               String AM_PM) {
-                endDate.setText(dateSelected.toString());
+
+                endDate.setText(dateFormat.format(dateSelected));
             }
 
             @Override
